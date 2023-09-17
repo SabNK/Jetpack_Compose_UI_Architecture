@@ -1,12 +1,16 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.uiarchitecture
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -15,12 +19,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.uiarchitecture.ui.theme.JetpackComposeUIArchitectureTheme
 
+private const val TAG = "MainActivity"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,20 +64,28 @@ fun PlacesPager(modifier: Modifier = Modifier,
 @Composable
 fun PlacesScreen(
     state: PlacesState,
-    action: PlacesAction
+    actions: PlacesActions
 ) {
     Scaffold {
         PlacesPager(
-            pagerState = pagerState,
+            modifier = Modifier.padding(it),
+            pagerState = Unit,
             state = state,
-            onFavoritesButtonClick = action.,
-            onNavigateToPlaceClick =  {place:Place -> onAction(PlacesAction.NavigateToButtonClicked(place)}
+            onFavoritesButtonClick = actions.onFavoritesClicked,
+            onNavigateToPlaceClick = actions.onNavigateToButtonClicked
         )
     }
 }
 
 @Composable
-fun rememberPlacesActions(navController: NavController): PlacesAction {
+fun rememberPlacesActions(coordinator: PlacesCoordinator,
+                          ): PlacesActions {
+    return remember(coordinator) {
+        PlacesActions(
+            onNavigateToButtonClicked = {coordinator::navigateToRoutePlanner},
+            onFavoritesClicked = {coordinator.viewModel::toggleFavorites}
+        )
+    }
 
 }
 
@@ -81,38 +95,22 @@ private fun Context.showError() {
 
 @Composable
 fun PlacesRoute(
-    navController: NavController,
-    viewModel: PlacesViewModel = PlacesViewModel(),
+    coordinator: PlacesCoordinator = rememberPlacesCoordinator()
 ) {
-    val state by viewModel.stateFlow.collectAsState()
+    val state by coordinator.viewModel.stateFlow.collectAsState()
     val context = LocalContext.current
-    val actions = rememberPlacesActions(navController)
+    val actions = rememberPlacesActions(coordinator)
 
     LaunchedEffect(state.error) {
         state.error?.let {
             context.showError()
-            viewModel.dismissError()
+            coordinator.viewModel.dismissError()
         }
     }
 
     PlacesScreen(
-        state : PlacesState = state,
-        onFavoritesButtonClick = {},
-        onNavigateToPlaceClick = {
-            when {
-                permissionState.isGranted -> {
-                    analyitcs.track("StartRoutePlanner")
-                    navController.navigate("RoutePlanner")
-                }
-                permissionState.shouldShowRationale -> {
-                    analytics.track("RationaleShown")
-                    navController.navigate("LocationRationale")
-                }
-                else -> {
-                    permissionState.launchPermissionRequest()
-                }
-            }
-        }
+        state  = state,
+        actions = actions
     )
 }
 
