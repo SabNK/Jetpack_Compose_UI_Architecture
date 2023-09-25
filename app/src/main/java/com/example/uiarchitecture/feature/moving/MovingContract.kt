@@ -19,10 +19,11 @@ class MovingState(
  * passed to the coordinator to handle
  **/
 data class MovingActions(
-    val onNameChanged: () -> Unit = {},
-    val onCoordClicked: () -> Unit = {},
-    val onAvatarClicked: () -> Unit = {},
-    val onFabClicked: () -> Unit = {}
+//    val onNameChanged: () -> Unit = {},
+//    val onCoordClicked: () -> Unit = {},
+//    val onAvatarClicked: () -> Unit = {},
+//    val onFabClicked: () -> Unit = {}
+    val onClick: () -> Unit = {}
 )
 
 /**
