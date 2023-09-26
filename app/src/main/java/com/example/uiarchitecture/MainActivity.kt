@@ -4,12 +4,15 @@ package com.example.uiarchitecture
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.uiarchitecture.ui.theme.JetpackComposeUIArchitectureTheme
 
-private const val TAG = "MainActivity"
+private const val TAG = "card"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,25 +43,64 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    var text by remember { mutableStateOf("") }
+                    var count by remember { mutableStateOf(0) }
 
-
+                    Column {
                         OutlinedCardWithTitle(
+                            title = "OutlinedCard",
                             content = { modifier ->
                                 var text by remember { mutableStateOf("") }
                                 var ok by remember { mutableStateOf(false) }
                                 Column {
-                                    Checkbox(checked = ok, onCheckedChange = { ok = it })
-//                                    OutlinedTextField(
-//                                        value = text,
-//                                        onValueChange = { text = it },
-//                                        modifier = modifier
-//                                    )
+                                    Checkbox(
+                                        checked = ok,
+                                        onCheckedChange = { ok = it },
+                                        modifier = modifier.focusable()
+                                    )
+                                    OutlinedTextField(
+                                        value = text,
+                                        onValueChange = { text = it },
+                                        modifier = modifier
+                                    )
 
-                                    Checkbox(checked = ok, onCheckedChange = { ok = it }, modifier = modifier)
+                                    Checkbox(
+                                        checked = ok,
+                                        onCheckedChange = { ok = it },
+                                        modifier = modifier.focusable()
+                                    )
+                                    OutlinedTextField(
+                                        value = text,
+                                        onValueChange = { text = it },
+                                        modifier = modifier
+                                    )
+                                    Button(onClick = { /*TODO*/ },
+                                        modifier = modifier.focusable()) {
+                                        Text("Click me")
+                                    }
                                 }
                             },
-                            contentCount = 2
+                            contentCount = count
                         )
+                        OutlinedTextField(
+                            value = text,
+                            onValueChange = { text = it }
+                        )
+                        Button(
+                            onClick = {
+                                count--
+                                Log.d(TAG, "onCreate: $count")
+                            },
+                        ) {
+                            Text("Minus")
+                        }
+                        Button(onClick = { count++
+                            Log.d(TAG, "onCreate: $count")},
+                        ) {
+                            Text("Plus")
+                        }
+
+                    }
 
 
 

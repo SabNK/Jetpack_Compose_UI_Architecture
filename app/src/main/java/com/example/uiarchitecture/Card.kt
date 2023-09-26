@@ -4,7 +4,12 @@ package com.example.uiarchitecture
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusGroup
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -32,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 private const val TAG = "Card"
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OutlinedCardWithTitle(
     content: @Composable ColumnScope.(Modifier) -> Unit,
@@ -39,7 +45,9 @@ fun OutlinedCardWithTitle(
     title: String? = null,
     modifier: Modifier = Modifier.padding(16.dp),
 ) {
-    var count by remember { mutableStateOf(contentCount) }
+    val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
+    var count by remember { mutableStateOf(0) }
     var color = if (count < contentCount) Color.Magenta else Color.DarkGray
     val modifierWithFocus = modifier.onFocusChanged {
         if (it.isFocused) {
@@ -50,9 +58,10 @@ fun OutlinedCardWithTitle(
         else {
             count++
             Log.d(TAG, "OutlinedCardWithTitle: count++: $count")
+            Log.d(TAG, "OutlinedCardWithTitle: end $count")
         }
-    }
-    Box {
+    }.focusable()
+    Box(modifier = modifier.focusGroup()) {
         OutlinedCard(
             modifier = modifier.padding(top = 8.dp),
             shape = RoundedCornerShape(4.dp),
@@ -61,24 +70,22 @@ fun OutlinedCardWithTitle(
             content(modifierWithFocus)
         }
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .padding(start = 10.dp)
-
-
                 //ToDo Check and replace with the Theme background color
                 .background(color = Color.White),
         ) {
             Spacer(modifier = Modifier.width(5.dp))
-            Text(text = title?.let { it } ?: "",
+            Text(
+                text = title.orEmpty(),
                 style = typography.labelMedium
-
             )
             Spacer(modifier = Modifier.width(5.dp))
-        } //Text( "kuku")
+        }
     }
 }
 
-@Preview(showSystemUi = true)
+/*@Preview()
 @Composable
 fun CardPreview(){
     OutlinedCardWithTitle(
@@ -88,9 +95,10 @@ fun CardPreview(){
                 value = text,
                 onValueChange = { text = it },
                 modifier = modifier)
-        }
+        },
+        title = "Title"
     )
-}
+}*/
 
 
 
