@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
                 color = MaterialTheme.colorScheme.background
             ) {
                 var text by remember { mutableStateOf("") }
-
+                val focusManager = LocalFocusManager.current
                 Column () {
                     OutlinedCardWithTitle(
                         title = "OutlinedCard",
@@ -105,9 +106,13 @@ class MainActivity : ComponentActivity() {
                         onValueChange = { text = it }
                     )
                     Button(
-                        onClick = { },
+                        onClick = {focusManager.clearFocus()},
 
                         ) { Icon(Icons.Default.Clear, null) }
+                    Button(
+                        onClick = {},
+
+                        ) { Icon(Icons.Default.Check, null) }
 
                 }
 
