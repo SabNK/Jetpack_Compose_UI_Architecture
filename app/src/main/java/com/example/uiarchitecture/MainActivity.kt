@@ -11,10 +11,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -29,82 +34,84 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.uiarchitecture.ui.theme.JetpackComposeUIArchitectureTheme
 
 private const val TAG = "card"
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            JetpackComposeUIArchitectureTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    var text by remember { mutableStateOf("") }
-                    var count by remember { mutableStateOf(0) }
+            //FocusableBox()
+            extracted()
+        }
+    }
 
-                    Column {
-                        OutlinedCardWithTitle(
-                            title = "OutlinedCard",
-                            content = { modifier ->
-                                var text by remember { mutableStateOf("") }
-                                var ok by remember { mutableStateOf(false) }
-                                Column {
-                                    Checkbox(
-                                        checked = ok,
-                                        onCheckedChange = { ok = it },
-                                        modifier = modifier.focusable()
-                                    )
-                                    OutlinedTextField(
-                                        value = text,
-                                        onValueChange = { text = it },
-                                        modifier = modifier
-                                    )
+    @Composable
+    @OptIn(ExperimentalMaterial3Api::class)
+    private fun extracted() {
+        JetpackComposeUIArchitectureTheme {
+            // A surface container using the 'background' color from the theme
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                var text by remember { mutableStateOf("") }
 
-                                    Checkbox(
-                                        checked = ok,
-                                        onCheckedChange = { ok = it },
-                                        modifier = modifier.focusable()
-                                    )
-                                    OutlinedTextField(
-                                        value = text,
-                                        onValueChange = { text = it },
-                                        modifier = modifier
-                                    )
-                                    Button(onClick = { /*TODO*/ },
-                                        modifier = modifier.focusable()) {
-                                        Text("Click me")
+                Column () {
+                    OutlinedCardWithTitle(
+                        title = "OutlinedCard",
+                        content = { interactionSource, onAction ->
+                            var text by remember { mutableStateOf("") }
+                            var text1 by remember { mutableStateOf("") }
+                            var ok by remember { mutableStateOf(false) }
+                            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                                Checkbox(
+                                    checked = ok,
+                                    onCheckedChange = {
+                                        ok = it
+                                        onAction()
                                     }
+                                )
+                                OutlinedTextField(
+                                    value = text,
+                                    onValueChange = { text = it },
+                                    interactionSource = interactionSource,
+                                )
+
+                                Checkbox(
+                                    checked = ok,
+                                    onCheckedChange = { ok = it },
+                                )
+                                OutlinedTextField(
+                                    value = text1,
+                                    onValueChange = { text1 = it },
+                                    interactionSource = interactionSource,
+                                )
+                                Button(
+                                    onClick = { onAction() },
+                                )
+                                {
+                                    Text("Click me")
                                 }
-                            },
-                            contentCount = count
-                        )
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it }
-                        )
-                        Button(
-                            onClick = {
-                                count--
-                                Log.d(TAG, "onCreate: $count")
-                            },
-                        ) {
-                            Text("Minus")
+                            }
                         }
-                        Button(onClick = { count++
-                            Log.d(TAG, "onCreate: $count")},
-                        ) {
-                            Text("Plus")
-                        }
+                    )
+                    OutlinedTextField(
+                        value = text,
+                        onValueChange = { text = it }
+                    )
+                    Button(
+                        onClick = { },
 
-                    }
-
-
+                        ) { Icon(Icons.Default.Clear, null) }
 
                 }
+
+
             }
         }
     }
@@ -127,6 +134,7 @@ fun PlacesPager(modifier: Modifier = Modifier,
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlacesScreen(
     state: PlacesState,
