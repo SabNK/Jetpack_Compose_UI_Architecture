@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.uiarchitecture.feature.anchored_draggable.AnchoredDraggableSample
 import com.example.uiarchitecture.ui.theme.JetpackComposeUIArchitectureTheme
 
 private const val TAG = "card"
@@ -47,7 +48,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             //FocusableBox()
-            extracted()
+            AnchoredDraggableSample()
+            //extracted()
         }
     }
 
