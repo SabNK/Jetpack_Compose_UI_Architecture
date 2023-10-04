@@ -23,10 +23,10 @@ import androidx.compose.ui.unit.dp
 import com.example.uiarchitecture.R
 import kotlin.math.roundToInt
 
-enum class DragAnchors {
-    Start,
-    End,
-}
+//enum class DragAnchors {
+//    Start,
+//    End,
+//}
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AnchoredDraggableSample(modifier: Modifier = Modifier,) {
